@@ -30,3 +30,10 @@ Thumbs.db
 _extract_pdf.py
 pdf_content.txt
 kaggle_*.html
+
+# Personal / non-deliverable files (kept locally, not pushed to the public repo)
+# - SUBMIT.md is a checklist for the author submitting to Kaggle
+# - the course PDF is Google/Kaggle content, not ours to redistribute
+docs/SUBMIT.md
+AI Agents_*Kaggle*.pdf
+*.pdf

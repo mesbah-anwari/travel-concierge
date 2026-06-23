@@ -27,7 +27,7 @@ Every user input and agent output flows through a **security guard layer**
 | 4 | **Security features**                 | `src/travel_concierge/security/guards.py` — 4 guardrails, 14 unit tests |
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the architecture
-diagram and [`docs/WRITEUP.md`](docs/WRITEUP.md) for the full Kaggle writeup.
+diagram and [`docs/PROJECT_SUMMARY.md`](docs/PROJECT_SUMMARY.md) for the full project writeup.
 
 ---
 
@@ -114,8 +114,7 @@ notebooks/
 └── kaggle_demo.ipynb         # end-to-end demo for Kaggle judges
 docs/
 ├── ARCHITECTURE.md
-├── WRITEUP.md
-└── SUBMIT.md                 # step-by-step Kaggle submission guide
+└── PROJECT_SUMMARY.md
 ```
 
 ---
