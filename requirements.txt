@@ -1,0 +1,16 @@
+# Core LLM / agent framework
+google-adk>=0.2.0
+google-generativeai>=0.8.3
+
+# MCP server
+fastmcp>=0.4.0
+
+# Data + IO
+pydantic>=2.7.0
+httpx>=0.27.0
+python-dotenv>=1.0.1
+rich>=13.7.0
+nest-asyncio>=1.6.0
+
+# Dev / notebook
+ipykernel>=6.29.0

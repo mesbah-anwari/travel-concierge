@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "travel-concierge"
+version = "1.0.0"
+description = "Multi-agent Travel Concierge — Kaggle Capstone (Concierge Agents track)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Travel Concierge Capstone" }]
+keywords = ["adk", "agents", "mcp", "kaggle", "capstone", "travel", "concierge", "gemini"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "google-adk>=0.2.0",
+  "google-generativeai>=0.8.3",
+  "fastmcp>=0.4.0",
+  "pydantic>=2.7.0",
+  "httpx>=0.27.0",
+  "python-dotenv>=1.0.1",
+  "rich>=13.7.0",
+  "nest-asyncio>=1.6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+notebook = ["ipykernel>=6.29.0"]
+
+[project.scripts]
+travel-concierge = "travel_concierge.__main__:main"
+travel-concierge-mcp = "travel_concierge.mcp_server.server:mcp.run"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
