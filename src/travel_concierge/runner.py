@@ -19,6 +19,26 @@ from travel_concierge.security.guards import guard_input, guard_output
 
 APP_NAME = "travel_concierge"
 
+# Retry policy for transient LLM failures (503 UNAVAILABLE, 429 rate limits,
+# network hiccups). Gemini free tier and busy periods sometimes hit these.
+_MAX_ATTEMPTS = 4
+_INITIAL_BACKOFF_S = 2.0
+
+
+def _is_transient(exc: BaseException) -> bool:
+    """Detect Google server-side / rate-limit errors worth retrying."""
+    name = type(exc).__name__
+    msg = str(exc).lower()
+    if name in {"ServerError", "_ResourceExhaustedError", "ResourceExhausted"}:
+        return True
+    if "503" in msg and "unavailable" in msg:
+        return True
+    if "500" in msg or "502" in msg or "504" in msg:
+        return True
+    if "429" in msg and "resource_exhausted" in msg:
+        return True
+    return False
+
 
 def _new_runner() -> Runner:
     require_api_key()
@@ -53,19 +73,42 @@ async def _stream(message: str, user_id: str, session_id: str) -> AsyncIterator[
                     yield txt
 
 
+async def _run_once(user_message: str) -> str:
+    user_id = f"user-{uuid.uuid4().hex[:8]}"
+    session_id = f"sess-{uuid.uuid4().hex[:8]}"
+    chunks: list[str] = []
+    async for chunk in _stream(user_message, user_id, session_id):
+        chunks.append(chunk)
+    return "\n".join(chunks).strip() or "(no response)"
+
+
 async def plan_trip_async(user_message: str) -> str:
-    """End-to-end: guard input → run agents → guard output."""
+    """End-to-end: guard input → run agents (with retry) → guard output."""
     g = guard_input(user_message)
     if not g.allowed:
         return f"⚠️  Request blocked by safety guard: {g.reason}"
 
-    user_id = f"user-{uuid.uuid4().hex[:8]}"
-    session_id = f"sess-{uuid.uuid4().hex[:8]}"
-
-    chunks: list[str] = []
-    async for chunk in _stream(g.text, user_id, session_id):
-        chunks.append(chunk)
-    raw = "\n".join(chunks).strip() or "(no response)"
+    backoff = _INITIAL_BACKOFF_S
+    last_exc: BaseException | None = None
+    for attempt in range(1, _MAX_ATTEMPTS + 1):
+        try:
+            raw = await _run_once(g.text)
+            break
+        except BaseException as exc:  # noqa: BLE001
+            if attempt < _MAX_ATTEMPTS and _is_transient(exc):
+                print(
+                    f"[runner] transient error on attempt {attempt}/{_MAX_ATTEMPTS} "
+                    f"({type(exc).__name__}); retrying in {backoff:.1f}s"
+                )
+                await asyncio.sleep(backoff)
+                backoff *= 2
+                last_exc = exc
+                continue
+            raise
+    else:  # pragma: no cover
+        if last_exc is not None:
+            raise last_exc
+        raw = "(no response)"
 
     out = guard_output(raw)
     if not out.allowed:
