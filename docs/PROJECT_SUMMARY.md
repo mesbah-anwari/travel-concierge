@@ -4,7 +4,7 @@
 > **Course:** 5-Day AI Agents: Intensive Vibe Coding with Google
 > **Repo:** https://github.com/mesbah-anwari/travel-concierge
 > **Demo notebook:** https://www.kaggle.com/code/anwarim/travel-concierge-kaggle-capstone-demo?scriptVersionId=333132917
-> **Video walkthrough:** *(link to be added after recording — see `SUBMIT.md`)*
+> **Video walkthrough:** https://www.loom.com/share/a81b040f13984b71ab08762cb55a23a5
 
 ## 1. Problem & motivation
 
