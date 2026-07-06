@@ -27,7 +27,7 @@ else:
     if discovered:
         load_dotenv(discovered, override=False)
 
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
 DEFAULT_HOME_CURRENCY = os.getenv("DEFAULT_HOME_CURRENCY", "USD")
 
 
